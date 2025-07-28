@@ -1,56 +1,3 @@
-// import React, { useContext, useState, useEffect } from "react";
-// import { AuthContext } from "./AuthProvider.jsx";
-// import { Link, useNavigate } from "react-router-dom";
-
-// export default function Login() {
-//  const [email, setEmail] = useState("");
-//  const [password, setPassword] = useState("");
-//  const { user, login, error } = useContext(AuthContext);
-//   const navigate = useNavigate();
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     login({ email, password});
-//   };
-
-//   useEffect(() => {
-//     if (user) {
-//       navigate("/dashboard/otp/",{ state: { email: user.email } });
-//     }
-//   }, [user, navigate]);
-
-//   return (
-//     <div className="auth-form">
-//       <h2>Login</h2>
-//       {error && <p className="error">{error}</p>}
-//       <form onSubmit={handleSubmit}>
-//         <label>
-//           Email
-//           <input
-//             type="email"
-//             value={email}
-//             onChange={(e) => setEmail(e.target.value)}
-//             required
-//           />
-//         </label>
-//         <label>
-//           Password
-//           <input
-//             type="password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             required
-//           />
-//         </label>
-//         {error && <p className="error">{error}</p>}
-//         <button type="submit">Log In</button>
-//       </form>
-//       <Link to="/signup" className="link">
-//         Don't have an account? Sign Up
-//       </Link>
-//     </div>
-//   );
-// }
 
 
 
@@ -73,7 +20,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard/otp/", { state: { email: user.email } });
+      navigate("/otp", { state: { email: user.email } });
     }
   }, [user, navigate]);
 

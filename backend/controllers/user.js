@@ -1,7 +1,7 @@
 
 const jwt = require('jsonwebtoken');
 const { generateToken, requireAuth } = require("../config/auth.js");
-const { User, Contact } = require('../models/models');  
+const { User, Contact, GlobalContact } = require("../models/models");  
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
 const nodemailer = require("nodemailer");
@@ -19,6 +19,92 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
+
+const markSpam = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+    const userId = req.user.user_id; // From auth middleware
+
+    // Validation
+    if (!phoneNumber) {
+      return res.status(400).json({
+        success: false,
+        message: "Phone number is required",
+      });
+    }
+
+    // Find or create the contact in GlobalContact database
+    const [globalContact, created] = await GlobalContact.findOrCreate({
+      where: { phoneNumber: phoneNumber.trim() },
+      defaults: {
+        phoneNumber: phoneNumber.trim(),
+        name: "Unknown",
+        spamLikelihood: 0,
+        totalSpamReports: 0,
+        isRegistered: false,
+      },
+    });
+
+    // Increment spam reports
+    await globalContact.update({
+      totalSpamReports: globalContact.totalSpamReports + 1,
+    });
+
+    // Calculate new spam likelihood (you can adjust this formula)
+    // For now, let's use a simple calculation: min(totalSpamReports * 10, 100)
+    const newSpamLikelihood = Math.min(
+      globalContact.totalSpamReports * 10,
+      100
+    );
+
+    await globalContact.update({
+      spamLikelihood: newSpamLikelihood,
+    });
+
+    console.log(
+      `Phone ${phoneNumber} marked as spam. Total reports: ${globalContact.totalSpamReports}`
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Number marked as spam successfully",
+      data: {
+        phoneNumber: globalContact.phoneNumber,
+        totalSpamReports: globalContact.totalSpamReports,
+        spamLikelihood: globalContact.spamLikelihood,
+      },
+    });
+  } catch (error) {
+    console.error("Mark spam error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark number as spam",
+    });
+  }
+};
+
+
+
+// Get all data from GlobalContact database
+const getGlobalData = async (req, res) => {
+ try {
+   const contacts = await GlobalContact.findAll({
+     order: [['spamLikelihood', 'DESC']]
+   });
+   
+   return res.status(200).json({
+     success: true,
+     data: contacts
+   });
+   
+ } catch (error) {
+   console.error("Error fetching global data:", error);
+   return res.status(500).json({ 
+     message: "Internal server error" 
+   });
+ }
+};
+
 
 
 const sendotp = async (req, res) => {
@@ -93,6 +179,25 @@ const verifyotp = async (req, res) => {
     // Move token generation outside else block
     console.log("generating token");
     const user = await User.findOne({ where: { email } });
+    // Update user verification status
+    await user.update({ isVerified: true });
+    // Add/Update user in GlobalContact database
+    try {
+      await GlobalContact.findOrCreate({
+        where: { phoneNumber: user.PHnumber },
+        defaults: {
+          phoneNumber: user.PHnumber,
+          name: user.username,
+          spamLikelihood: 0,
+          totalSpamReports: 0,
+          isRegistered: true,
+        },
+      });
+      console.log("User added/updated in GlobalContact database");
+    } catch (globalContactError) {
+      console.error("Error updating GlobalContact:", globalContactError);
+      // Don't fail verification if GlobalContact fails
+    }
     const payload = { id: user.id };
     const token = generateToken(payload);
     console.log("Token generated:", token);
@@ -176,7 +281,7 @@ const signup = async (req, res) => {
         city: user.city,
         country: user.country,
         isVerified: false,
-      }
+      },
     });
   } catch (error) {
     console.error("Error in signup:", error);
@@ -243,8 +348,8 @@ const login = async (req, res) => {
 const addcontact = async(req, res) => {
   try {
     const { name, phonenumber } = req.body;
-    console.log(req.body)
-        console.log(req.user);
+    console.log(req.body);
+    console.log(req.user);
     const userId = req.user.user_id; // From auth middleware
 
     // Validation
@@ -261,6 +366,24 @@ const addcontact = async(req, res) => {
       contact_name: name.trim(),
       contact_phone: phonenumber.trim(),
     });
+
+    // Add/Update contact in GlobalContact database
+    try {
+      await GlobalContact.findOrCreate({
+        where: { phoneNumber: phonenumber.trim() },
+        defaults: {
+          phoneNumber: phonenumber.trim(),
+          name: name.trim(),
+          spamLikelihood: 0,
+          totalSpamReports: 0,
+          isRegistered: false, // Since it's a contact, not a registered user
+        },
+      });
+      console.log("Contact added to GlobalContact database");
+    } catch (globalContactError) {
+      console.error("Error adding to GlobalContact:", globalContactError);
+      // Don't fail contact creation if GlobalContact fails
+    }
 
     res.status(201).json({
       success: true,
@@ -355,6 +478,8 @@ module.exports = {
   addcontact,
   deletecontact,
   getcontacts,
+  getGlobalData,
+  markSpam,
 };
 
 

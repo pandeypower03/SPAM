@@ -94,6 +94,44 @@ const Contact = sequelize.define(
   }
 );
 
+// Define GlobalContact model
+const GlobalContact = sequelize.define(
+ "GlobalContact",
+ {
+   id: {
+     type: DataTypes.INTEGER,
+     primaryKey: true,
+     autoIncrement: true,
+   },
+   phoneNumber: {
+     type: DataTypes.STRING(20),
+     allowNull: false,
+     unique: true,
+   },
+   name: {
+     type: DataTypes.STRING(100),
+     defaultValue: 'Unknown',
+   },
+   spamLikelihood: {
+     type: DataTypes.INTEGER,
+     defaultValue: 0,
+   },
+   totalSpamReports: {
+     type: DataTypes.INTEGER,
+     defaultValue: 0,
+   },
+   isRegistered: {
+     type: DataTypes.BOOLEAN,
+     defaultValue: false,
+   },
+ },
+ {
+   tableName: "globalcontacts",
+   timestamps: false,
+ }
+);
+
+
 // Define Associations
 User.hasMany(Contact, { foreignKey: 'user_id', as: 'contacts' });
 Contact.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
@@ -109,4 +147,5 @@ module.exports = {
   sequelize,
   User,
   Contact,
+  GlobalContact,
 };

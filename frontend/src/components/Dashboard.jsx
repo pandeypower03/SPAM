@@ -108,9 +108,9 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="max-w-4xl mx-auto p-6 bg-white min-h-screen">
+      <div className="max-w-9xl mx-auto p-6 bg-white min-h-screen">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">Add Your Contacts here!!</h1>
 
           {user && (
             <p className="text-lg text-gray-600 mb-4">
@@ -248,6 +248,25 @@ const Dashboard = () => {
               {contacts.length !== 1 ? "s" : ""} total
             </div>
           )}
+          <button
+            onClick={() => navigate("/dashboard/markspam")}
+            className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center"
+          >
+            <svg
+              className="w-4 h-4 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+            Mark Spam
+          </button>
         </div>
       </div>
     </>

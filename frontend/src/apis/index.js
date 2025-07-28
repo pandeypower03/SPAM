@@ -7,6 +7,71 @@ const API_BASE = 'http://localhost:5000/users';
 const TOKEN_KEY = 'AUTH_TOKEN';  
 const USER = "USER_DATA"; 
 
+
+// Mark number as spam
+export const markNumberAsSpam = async (phoneNumber) => {
+  try {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    const response = await fetch(`${API_BASE}/markspam`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ phoneNumber }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to mark as spam");
+    }
+
+    return {
+      success: true,
+      data: data.data,
+      message: data.message,
+    };
+  } catch (error) {
+    console.error("Error marking as spam:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
+
+export const getGlobalContacts = async () => {
+  try {
+    const token = localStorage.getItem(TOKEN_KEY); // Or however you store your token
+
+    const response = await fetch(`${API_BASE}/global`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch global contacts");
+    }
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error) {
+    console.error("Error fetching global contacts:", error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
 //sendotp
 export async function resendotpfrontend({ email }) {
   try {

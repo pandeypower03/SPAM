@@ -16,9 +16,9 @@ const AuthGaurd = () => {
 useEffect(() => {
   const { token } = checkLogin(); // Match AuthProvider format
   if (!token) {
-    navigate("/");
+    navigate("/", { replace: true });
   }
-}, [navigate]);
+}, []);
 
   return (
     <>
