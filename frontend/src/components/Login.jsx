@@ -20,7 +20,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate("/otp", { state: { email: user.email } });
+      navigate("/dashboard", { state: { email: user.email } });
     }
   }, [user, navigate]);
 
