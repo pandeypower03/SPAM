@@ -4,6 +4,8 @@
 // 1. Define your key as a string constant
 import axios from 'axios';
 const API_BASE = 'http://localhost:5000/users';  
+// In frontend/src/apis/index.js
+// const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/users';
 const TOKEN_KEY = 'AUTH_TOKEN';  
 const USER = "USER_DATA"; 
 

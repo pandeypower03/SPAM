@@ -115,16 +115,18 @@ console.log(result)
     const result = await markNumberAsSpam(number);
 
     if (result.success) {
+       console.log("API response:", result.data);
       alert(
+        
         `Successfully marked ${number} as spam! Total reports: ${result.data.totalSpamReports}`
       );
-
+  
       // Update the search result if it matches the marked number
       if (searchResult && searchResult.number === number) {
         setSearchResult({
           ...searchResult,
-          reports: result.data.totalSpamReports,
-          spamLikelihood: result.data.spamLikelihood,
+          reports: result?.data?.totalSpamReports || 0,
+          spamLikelihood: result?.data?.spamLikelihood || 0,
         });
       }
 
@@ -134,8 +136,8 @@ console.log(result)
           result.number === number
             ? {
                 ...result,
-                reports: result.data.totalSpamReports,
-                spamLikelihood: result.data.spamLikelihood,
+                reports: result?.data?.totalSpamReports,
+                spamLikelihood: result?.data?.spamLikelihood,
               }
             : result
         )
@@ -367,7 +369,7 @@ console.log(result)
                     <p className="font-semibold">{contact.phoneNumber}</p>
                     <p className="text-sm text-gray-600">{contact.name}</p>
                     <p className="text-sm text-gray-500">
-                      {contact?.totalSpamReports} reports
+                      {contact?.totalSpamReports || 0} reports
                     </p>
                     <p className="text-sm text-gray-500">
                       {contact.isRegistered
