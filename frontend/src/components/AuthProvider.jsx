@@ -40,8 +40,7 @@ const login = async (creds) => {
   const result = await userLogin(creds);
 
   if (result.success) {
-    setUser(result.user);
-    return true;
+     return { success: true, user: result.user };
   } else {
     // Show specific field errors or general message
     const errorMessage = result.errors
@@ -67,7 +66,7 @@ const login = async (creds) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, error, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, error,setUser, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "./AuthProvider.jsx";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,12 +11,17 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login({ email, password });
+    const result = await login({ email, password });
+
+    if (result.success) {
+      // Navigate to OTP page with user data
+      navigate("/otp", { state: { email, user: result.user } });
+    }
   };
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard", { state: { email: user.email } });
+      navigate("/dashboard/", { state: { email: user.email } });
     }
   }, [user, navigate]);
 
