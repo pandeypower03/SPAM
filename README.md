@@ -62,11 +62,6 @@ A comprehensive contact management and spam identification system that allows us
 - Spam likelihood scores
 - Reporting history and statistics
 
-#### Spam Reports Table
-- Individual spam reports from users
-- Timestamp and reporter information
-- Spam likelihood calculation data
-
 ## Authentication Flow
 
 1. **Registration**
