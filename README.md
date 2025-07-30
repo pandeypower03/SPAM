@@ -182,7 +182,7 @@ npm run dev
 JWT_SECRET='8y23!qjd*!2afl_fh7t9#+nsn+5%=iq4ql8u#gud+c14ub@9ff'
 PORT=5000
 JWT_EXPIRES_IN=1h
-DATABASE_URL=postgresql://postgres:wqCCWHnYGhoofmDyyHUQQXasRtdSbmXi@interchange.proxy.rlwy.net:43897/railway
+DATABASE_URL=#database_url
 DATABASE_HOST=postgres.railway.internal
 EMAIL_USER=#enter your email
 EMAIL_PASS=#enter app password
